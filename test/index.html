@@ -545,118 +545,71 @@
     </div>
   </div>
 
+  <style>
+    /* ... all CSS unchanged from previous answer ... */
+  </style>
+</head>
+<body>
+  <img class="deco-img img-top" id="topImage" src="TOP.png" alt="Top overlapping tattoo" width="225" height="150">
+  <img class="deco-img img-bottom" id="bottomImage" src="BOTTOM.png" alt="Bottom overlapping tattoo" width="225" height="150">
+
+  <div class="invitation-wrapper">
+    <!-- Name prompt card (unchanged) -->
+    <div class="name-prompt-card" id="namePromptCard">...</div>
+    <!-- Main form card (unchanged) -->
+    <div class="form-card" id="formCard">...</div>
+  </div>
+
   <script>
     (function() {
-      const topImg = document.getElementById('topImage');
-      const bottomImg = document.getElementById('bottomImage');
-      const namePromptCard = document.getElementById('namePromptCard');
-      const formCard = document.getElementById('formCard');
-      const guestNameInput = document.getElementById('guestNameInput');
-      const continueBtn = document.getElementById('continueBtn');
-      const guestNameLine = document.getElementById('guestNameLine');
-      const hiddenFullName = document.getElementById('hiddenFullName');
+      // ... existing variable declarations ...
       
-      let scrollEnabled = false;
-      const easeSlow = (t) => Math.pow(t, 3.5);
-      
-      function updateImagePositions() {
-        if (!scrollEnabled) return;
+      // --- Freeze images function (robust iOS fix) ---
+      function freezeImagesInPlace() {
+        // Disable any further parallax updates
+        scrollEnabled = false;
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', updateImagePositions);
         
-        const scrollY = window.scrollY;
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const rawProgress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
-        const progress = easeSlow(rawProgress);
-        
-        const topHeight = topImg.offsetHeight || 150;
-        const bottomHeight = bottomImg.offsetHeight || 150;
-        const viewportHeight = window.innerHeight;
-        
-        const topInitialTop = 20;
-        const bottomInitialBottom = 20;
-        const centerY = viewportHeight / 2;
-        
-        const topTargetMove = centerY - topInitialTop - (topHeight / 2);
-        const bottomInitialTop = viewportHeight - bottomHeight - bottomInitialBottom;
-        const bottomTargetMove = centerY - bottomInitialTop - (bottomHeight / 2);
-        
-        topImg.style.transform = `translateX(-50%) translateY(${progress * topTargetMove}px)`;
-        bottomImg.style.transform = `translateX(-50%) translateY(${progress * bottomTargetMove}px)`;
-      }
-
-      let ticking = false;
-      function onScroll() {
-        if (!scrollEnabled) return;
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            updateImagePositions();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }
-
-      function autoResize(textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
-      }
-
-      function proceedWithName() {
-        const guestName = guestNameInput.value.trim();
-        if (!guestName) {
-          alert('Please enter your name to continue.');
-          return;
-        }
-        
-        guestNameLine.textContent = guestName + ',';
-        hiddenFullName.value = guestName;
-        
-        namePromptCard.classList.add('hidden');
-        formCard.classList.add('visible');
-        
-        scrollEnabled = true;
-        updateImagePositions();
-        
-        document.querySelectorAll('textarea').forEach(ta => {
-          autoResize(ta);
+        // Convert fixed to absolute with current screen coordinates
+        [topImg, bottomImg].forEach(img => {
+          const rect = img.getBoundingClientRect();
+          // Get current computed transform (if any) to preserve exact position
+          const computedStyle = window.getComputedStyle(img);
+          const transform = computedStyle.transform;
+          
+          // Switch to absolute positioning relative to viewport
+          img.style.position = 'absolute';
+          img.style.top = rect.top + 'px';
+          img.style.left = rect.left + 'px';
+          img.style.transform = 'translateX(0) translateY(0)'; // reset transform since we use top/left
+          
+          // If there was an active transform, we need to incorporate it into top/left
+          // Because our transform is only translateY, we can simply add it to top
+          if (transform && transform !== 'none') {
+            // Parse translateY value (simplified; our transform is always translateX(-50%) translateY(…px))
+            const match = transform.match(/translateY\(([^)]+)\)/);
+            if (match) {
+              const translateY = parseFloat(match[1]) || 0;
+              img.style.top = (rect.top + translateY) + 'px';
+            }
+          }
+          
+          // Keep horizontal centering: left was already 50% with translateX(-50%)
+          // Since we set left to rect.left, it's already correct.
         });
       }
-
-      continueBtn.addEventListener('click', proceedWithName);
-      guestNameInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          proceedWithName();
-        }
-      });
-
-      window.addEventListener('load', () => {
-        updateImagePositions();
-        setTimeout(updateImagePositions, 20);
-        document.querySelectorAll('textarea').forEach(ta => {
-          autoResize(ta);
-          ta.addEventListener('input', () => autoResize(ta));
-        });
-      });
       
-      window.addEventListener('scroll', onScroll);
-      window.addEventListener('resize', () => {
-        if (scrollEnabled) updateImagePositions();
-      });
-      
-      topImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
-      bottomImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
-
-      const form = document.getElementById('weddingRsvp');
-      
+      // --- Modified submit handler ---
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         
+        // Validation (unchanged) ...
         const busCheckboxes = form.querySelectorAll('input[name="bus"]');
         if (!Array.from(busCheckboxes).some(cb => cb.checked)) {
           alert('Please select at least one travel/bus option.');
           return;
         }
-
         const phone = form.querySelector('input[name="phone"]').value.trim();
         const email = form.querySelector('input[name="email"]').value.trim();
         if (!phone && !email) {
@@ -664,25 +617,19 @@
           return;
         }
 
-        // Lock images in current position
-        const topTransform = window.getComputedStyle(topImg).transform;
-        const bottomTransform = window.getComputedStyle(bottomImg).transform;
-        topImg.style.transform = topTransform;
-        bottomImg.style.transform = bottomTransform;
-        scrollEnabled = false;
-        window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('resize', updateImagePositions);
+        // 🔒 FREEZE IMAGES IN PLACE (robust iOS fix)
+        freezeImagesInPlace();
 
+        // Fade out the form card
         formCard.classList.add('fade-out');
         
+        // Submit after animation
         setTimeout(() => {
           form.submit();
         }, 600);
       });
 
-      window.addEventListener('resize', () => {
-        document.querySelectorAll('textarea').forEach(autoResize);
-      });
+      // ... rest of script unchanged ...
     })();
   </script>
 </body>
