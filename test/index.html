@@ -45,7 +45,7 @@
       pointer-events: none;
       z-index: 2;
       filter: drop-shadow(0 4px 10px rgba(0,0,0,0.06));
-      transition: none; /* we manage movement via JS */
+      transition: transform 0.05s linear;
       will-change: transform;
       opacity: 0;
     }
@@ -436,7 +436,7 @@
   <img class="deco-img img-bottom" id="bottomImage" src="/images/bottom.png" alt="Bottom overlapping tattoo" width="225" height="150">
 
   <div class="invitation-wrapper">
-    <!-- Name prompt card -->
+    <!-- Step 1: Name prompt card -->
     <div class="name-prompt-card" id="namePromptCard">
       <h2>Welcome</h2>
       <div class="form-group">
@@ -445,7 +445,7 @@
       <button class="continue-btn" id="continueBtn">Continue</button>
     </div>
 
-    <!-- Main RSVP form -->
+    <!-- Step 2: Main RSVP form (hidden initially) -->
     <div class="form-card" id="formCard">
       <div class="header-reveal">
         <div class="wedding-details">
@@ -646,34 +646,6 @@
       topImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
       bottomImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
 
-      // --- ROBUST iOS FREEZE FUNCTION ---
-      function freezeImagesInPlace() {
-        scrollEnabled = false;
-        window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('resize', updateImagePositions);
-        
-        [topImg, bottomImg].forEach(img => {
-          const rect = img.getBoundingClientRect();
-          const computedStyle = window.getComputedStyle(img);
-          const transform = computedStyle.transform;
-          
-          // Switch to absolute positioning at exact screen coordinates
-          img.style.position = 'absolute';
-          img.style.top = rect.top + 'px';
-          img.style.left = rect.left + 'px';
-          img.style.transform = 'translateX(0) translateY(0)';
-          
-          // If there was an active translateY from our JS, incorporate it
-          if (transform && transform !== 'none') {
-            const match = transform.match(/translateY\(([^)]+)\)/);
-            if (match) {
-              const translateY = parseFloat(match[1]) || 0;
-              img.style.top = (rect.top + translateY) + 'px';
-            }
-          }
-        });
-      }
-
       const form = document.getElementById('weddingRsvp');
       
       form.addEventListener('submit', (e) => {
@@ -692,8 +664,14 @@
           return;
         }
 
-        // 🔒 FREEZE IMAGES NOW
-        freezeImagesInPlace();
+        // Lock images in current position
+        const topTransform = window.getComputedStyle(topImg).transform;
+        const bottomTransform = window.getComputedStyle(bottomImg).transform;
+        topImg.style.transform = topTransform;
+        bottomImg.style.transform = bottomTransform;
+        scrollEnabled = false;
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', updateImagePositions);
 
         formCard.classList.add('fade-out');
         
