@@ -58,11 +58,11 @@
     /* Fade-in animations for images – delays doubled */
     .img-top {
       animation: fadeInImage 1.2s ease forwards;
-      animation-delay: 0.3s;
+      animation-delay: 0.2s;
     }
     .img-bottom {
       animation: fadeInImage 1.2s ease forwards;
-      animation-delay: 0.3s;
+      animation-delay: 0.8s;
     }
 
     @keyframes fadeInImage {
@@ -94,6 +94,13 @@
       opacity: 0;
       animation: fadeInCard 1s ease forwards;
       animation-delay: 2.4s;
+      transition: opacity 0.6s ease;
+    }
+
+    /* Fade-out class for form submission */
+    .form-card.fade-out {
+      opacity: 0;
+      pointer-events: none;
     }
 
     @keyframes fadeInCard {
@@ -176,14 +183,13 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
+    /* Location block – background and border removed */
     .location-block {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       margin: 0 0 0.75rem;
-      background: rgba(211, 231, 203, 0.3);
       padding: 1rem 1.5rem;
-      border-radius: 40px;
     }
 
     .loc-item { font-size: 1rem; }
@@ -326,7 +332,7 @@
       transform: scale(1.01);
     }
 
-    /* Gifts section – border removed */
+    /* Gifts section */
     .gifts-section {
       background: rgba(211, 231, 203, 0.2);
       padding: 1.25rem 1.5rem;
@@ -371,7 +377,7 @@
   <img class="deco-img img-bottom" id="bottomImage" src="BOTTOM.png" alt="Bottom overlapping tattoo" width="225" height="150">
 
   <div class="invitation-wrapper">
-    <div class="form-card">
+    <div class="form-card" id="formCard">
       <!-- Header text group: revealed with card -->
       <div class="header-reveal">
         <div class="wedding-details">
@@ -475,6 +481,7 @@
     (function() {
       const topImg = document.getElementById('topImage');
       const bottomImg = document.getElementById('bottomImage');
+      const formCard = document.getElementById('formCard');
       
       const easeSlow = (t) => Math.pow(t, 3.5);
       
@@ -532,10 +539,14 @@
       bottomImg.addEventListener('load', updateImagePositions);
 
       const form = document.getElementById('weddingRsvp');
+      
+      // Intercept form submission for fade-out effect
       form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Validation
         const busCheckboxes = form.querySelectorAll('input[name="bus"]');
         if (!Array.from(busCheckboxes).some(cb => cb.checked)) {
-          e.preventDefault();
           alert('Please select at least one travel/bus option.');
           return;
         }
@@ -543,9 +554,17 @@
         const phone = form.querySelector('input[name="phone"]').value.trim();
         const email = form.querySelector('input[name="email"]').value.trim();
         if (!phone && !email) {
-          e.preventDefault();
           alert('Please provide either a phone number or email address.');
+          return;
         }
+
+        // Fade out the form card
+        formCard.classList.add('fade-out');
+        
+        // Wait for animation to finish, then submit the form
+        setTimeout(() => {
+          form.submit();
+        }, 600); // matches CSS transition duration
       });
 
       window.addEventListener('resize', () => {
