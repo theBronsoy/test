@@ -325,6 +325,14 @@
       transition: border 0.2s, box-shadow 0.2s;
     }
 
+    /* Set accent color for radio buttons and checkboxes */
+    input[type="radio"], input[type="checkbox"] {
+      accent-color: #681C24;
+      width: 1.1rem;
+      height: 1.1rem;
+      margin-right: 0.25rem;
+    }
+
     textarea {
       border-radius: 24px;
       resize: vertical;
@@ -440,7 +448,7 @@
     <div class="name-prompt-card" id="namePromptCard">
       <h2>Welcome</h2>
       <div class="form-group">
-        <input type="text" id="guestNameInput" placeholder="please give your preferred full name" autocomplete="off">
+        <input type="text" id="guestNameInput" placeholder="this will be used for seating, be as formal or as fun as you would like" autocomplete="off">
       </div>
       <button class="continue-btn" id="continueBtn">Continue</button>
     </div>
