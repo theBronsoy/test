@@ -270,6 +270,13 @@
       font-style: italic;
     }
 
+    /* New deadline section with border-bottom */
+    .deadline-section {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #681C24;
+      padding-bottom: 1.2rem;
+    }
+
     .rsvp-deadline {
       margin-top: 10px;
       font-style: italic;
@@ -427,8 +434,8 @@
   </style>
 </head>
 <body>
-  <img class="deco-img img-top" id="topImage" src="TOP.png" alt="Top overlapping tattoo" width="225" height="150">
-  <img class="deco-img img-bottom" id="bottomImage" src="BOTTOM.png" alt="Bottom overlapping tattoo" width="225" height="150">
+  <img class="deco-img img-top" id="topImage" src="/images/TOP.png" alt="Top overlapping tattoo" width="225" height="150">
+  <img class="deco-img img-bottom" id="bottomImage" src="/images/BOTTOM.png" alt="Bottom overlapping tattoo" width="225" height="150">
 
   <div class="invitation-wrapper">
     <!-- Step 1: Name prompt card -->
@@ -470,7 +477,11 @@
           <p>5:00pm - 10:00pm, arriving from 4:00pm</p>
         </div>
         <div class="dress-code">Cocktail attire</div>
-        <p class="rsvp-deadline">Kindly respond by August 24</p>
+        
+        <!-- New deadline section with border -->
+        <div class="deadline-section">
+          <p class="rsvp-deadline">Kindly respond by August 24</p>
+        </div>
 
         <form class="rsvp-form" id="weddingRsvp" action="https://api.formbox.app/s/fe0bzkpq3y1o3ubdgwh8b3p5" method="POST">
           <!-- Hidden field to send the captured name -->
@@ -596,15 +607,13 @@
           return;
         }
         
-        // Set the name line and hidden field
-        guestNameLine.textContent = guestName;
+        // Add comma after name
+        guestNameLine.textContent = guestName + ',';
         hiddenFullName.value = guestName;
         
-        // Hide name prompt, show main form
         namePromptCard.classList.add('hidden');
         formCard.classList.add('visible');
         
-        // Re-attach auto-resize for any textareas
         document.querySelectorAll('textarea').forEach(ta => {
           autoResize(ta);
         });
@@ -650,6 +659,15 @@
           alert('Please provide either a phone number or email address.');
           return;
         }
+
+        // 🔒 Lock images in current position to prevent iOS shift
+        const topTransform = window.getComputedStyle(topImg).transform;
+        const bottomTransform = window.getComputedStyle(bottomImg).transform;
+        topImg.style.transform = topTransform;
+        bottomImg.style.transform = bottomTransform;
+        // Disable future scroll updates
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', updateImagePositions);
 
         // Fade out the form card
         formCard.classList.add('fade-out');
