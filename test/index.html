@@ -162,22 +162,25 @@
       animation-delay: 0.2s;
     }
 
-    h1 {
-      font-size: 3.2rem;
-      font-weight: 400;
-      letter-spacing: 2px;
-      text-align: center;
-      margin-bottom: 0.2rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.02);
-    }
-
-    .personal-greeting {
+    .guest-name-line {
       font-size: 3.2rem;
       font-weight: 400;
       letter-spacing: 2px;
       text-align: center;
       margin-bottom: 0.2rem;
       color: #681C24;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.02);
+      line-height: 1.2;
+    }
+
+    .invited-line {
+      font-size: 3.2rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 0.2rem;
+      color: #681C24;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.02);
     }
 
     .sub-invite {
@@ -410,7 +413,7 @@
 
     @media (max-width: 600px) {
       .form-card, .name-prompt-card { padding: 1.8rem 1.2rem; }
-      h1, .personal-greeting { font-size: 2.5rem; }
+      .guest-name-line, .invited-line { font-size: 2.5rem; }
       .sub-invite { font-size: 1rem; }
       .names { font-size: 2.2rem; }
       .deco-img { width: 180px; }
@@ -424,8 +427,8 @@
   </style>
 </head>
 <body>
-  <img class="deco-img img-top" id="topImage" src="TOPstamp.png" alt="Top overlapping tattoo" width="225" height="150">
-  <img class="deco-img img-bottom" id="bottomImage" src="BOTTOMstamp.png" alt="Bottom overlapping tattoo" width="225" height="150">
+  <img class="deco-img img-top" id="topImage" src="TOP.png" alt="Top overlapping tattoo" width="225" height="150">
+  <img class="deco-img img-bottom" id="bottomImage" src="BOTTOM.png" alt="Bottom overlapping tattoo" width="225" height="150">
 
   <div class="invitation-wrapper">
     <!-- Step 1: Name prompt card -->
@@ -441,7 +444,8 @@
     <div class="form-card" id="formCard">
       <div class="header-reveal">
         <div class="wedding-details">
-          <div class="personal-greeting" id="personalGreeting"></div>
+          <div class="guest-name-line" id="guestNameLine"></div>
+          <div class="invited-line">you are invited</div>
           <div class="sub-invite">to the wedding of</div>
           <div class="names">
             <span>Kate</span>
@@ -469,10 +473,8 @@
         <p class="rsvp-deadline">Kindly respond by August 24</p>
 
         <form class="rsvp-form" id="weddingRsvp" action="https://api.formbox.app/s/fe0bzkpq3y1o3ubdgwh8b3p5" method="POST">
-          <div class="form-group">
-            <label>Full name</label>
-            <input type="text" name="fullName" id="fullNameField" placeholder="this will be used for seating, be as formal or as fun as you would like" required>
-          </div>
+          <!-- Hidden field to send the captured name -->
+          <input type="hidden" name="fullName" id="hiddenFullName">
 
           <div class="form-group">
             <label>How would you like us to contact you? <span class="hint">(either of these work for us.)</span></label>
@@ -544,8 +546,8 @@
       const formCard = document.getElementById('formCard');
       const guestNameInput = document.getElementById('guestNameInput');
       const continueBtn = document.getElementById('continueBtn');
-      const personalGreeting = document.getElementById('personalGreeting');
-      const fullNameField = document.getElementById('fullNameField');
+      const guestNameLine = document.getElementById('guestNameLine');
+      const hiddenFullName = document.getElementById('hiddenFullName');
       
       const easeSlow = (t) => Math.pow(t, 3.5);
       
@@ -587,7 +589,6 @@
         textarea.style.height = textarea.scrollHeight + 'px';
       }
 
-      // Handle name submission
       function proceedWithName() {
         const guestName = guestNameInput.value.trim();
         if (!guestName) {
@@ -595,17 +596,15 @@
           return;
         }
         
-        // Set personalized greeting
-        personalGreeting.textContent = `${guestName}, you are invited`;
-        
-        // Pre-fill the full name field in the form
-        fullNameField.value = guestName;
+        // Set the name line and hidden field
+        guestNameLine.textContent = guestName;
+        hiddenFullName.value = guestName;
         
         // Hide name prompt, show main form
         namePromptCard.classList.add('hidden');
         formCard.classList.add('visible');
         
-        // Re-attach auto-resize for any textareas in the newly shown form
+        // Re-attach auto-resize for any textareas
         document.querySelectorAll('textarea').forEach(ta => {
           autoResize(ta);
         });
