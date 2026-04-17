@@ -80,6 +80,7 @@
       padding: 4rem 1.5rem;
     }
 
+    /* Form card – initially hidden, fades in with header */
     .form-card {
       max-width: 720px;
       width: 100%;
@@ -90,11 +91,19 @@
       border-radius: 32px;
       box-shadow: 0 25px 40px -10px rgba(30, 20, 5, 0.15);
       border: 1px solid rgba(104, 28, 36, 0.2);
+      opacity: 0;
+      animation: fadeInCard 1s ease forwards;
+      animation-delay: 1.2s;
+    }
+
+    @keyframes fadeInCard {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
     }
 
     h1, h2, .accent-text, .section-title { color: #681C24; }
 
-    /* Header text group – hidden initially */
+    /* Header text group – hidden initially, fades in after card appears */
     .header-reveal {
       opacity: 0;
       animation: fadeInUp 1s ease forwards;
@@ -159,6 +168,7 @@
       opacity: 0;
       animation: fadeInUp 0.9s ease forwards;
       animation-delay: 2s;
+      text-align: center; /* Centers all text inside */
     }
 
     @keyframes fadeInUp {
@@ -199,10 +209,18 @@
       font-style: italic;
     }
 
+    /* Ensure the respond line is centered */
+    .rsvp-deadline {
+      margin-top: 10px;
+      font-style: italic;
+      color: #681C24;
+    }
+
     .rsvp-form {
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      text-align: left; /* Form fields should remain left-aligned for readability */
     }
 
     .form-group {
@@ -355,7 +373,7 @@
 
   <div class="invitation-wrapper">
     <div class="form-card">
-      <!-- Header text group: revealed after images -->
+      <!-- Header text group: revealed with card -->
       <div class="header-reveal">
         <div class="wedding-details">
           <h1>you are invited</h1>
@@ -384,7 +402,7 @@
           <p>5:00pm - 10:00pm, arriving from 4:00pm</p>
         </div>
         <div class="dress-code">Cocktail attire</div>
-        <p style="margin-top: 10px; font-style: italic; color: #681C24;">Kindly respond by August 24</p>
+        <p class="rsvp-deadline">Kindly respond by August 24</p>
 
         <form class="rsvp-form" id="weddingRsvp" action="https://api.formbox.app/s/fe0bzkpq3y1o3ubdgwh8b3p5" method="POST">
           <div class="form-group">
