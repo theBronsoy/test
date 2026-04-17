@@ -55,14 +55,14 @@
     .img-top { top: 20px; }
     .img-bottom { bottom: 20px; }
 
-    /* Fade-in animations for images */
+    /* Fade-in animations for images – delays doubled */
     .img-top {
       animation: fadeInImage 1.2s ease forwards;
-      animation-delay: 0.1s;
+      animation-delay: 0.2s;
     }
     .img-bottom {
       animation: fadeInImage 1.2s ease forwards;
-      animation-delay: 0.4s;
+      animation-delay: 0.8s;
     }
 
     @keyframes fadeInImage {
@@ -80,7 +80,7 @@
       padding: 4rem 1.5rem;
     }
 
-    /* Form card – initially hidden, fades in with header */
+    /* Form card – initially hidden, fades in with header – delay doubled */
     .form-card {
       max-width: 720px;
       width: 100%;
@@ -93,7 +93,7 @@
       border: 1px solid rgba(104, 28, 36, 0.2);
       opacity: 0;
       animation: fadeInCard 1s ease forwards;
-      animation-delay: 1.2s;
+      animation-delay: 2.4s;
     }
 
     @keyframes fadeInCard {
@@ -103,11 +103,11 @@
 
     h1, h2, .accent-text, .section-title { color: #681C24; }
 
-    /* Header text group – hidden initially, fades in after card appears */
+    /* Header text group – hidden initially, fades in after card appears – delay doubled */
     .header-reveal {
       opacity: 0;
       animation: fadeInUp 1s ease forwards;
-      animation-delay: 1.2s;
+      animation-delay: 2.4s;
     }
 
     h1 {
@@ -163,12 +163,12 @@
       padding-bottom: 1.2rem;
     }
 
-    /* Content group (location, dress code, form) – hidden initially */
+    /* Content group (location, dress code, form) – hidden initially – delay doubled */
     .content-reveal {
       opacity: 0;
       animation: fadeInUp 0.9s ease forwards;
-      animation-delay: 2s;
-      text-align: center; /* Centers all text inside */
+      animation-delay: 4s;
+      text-align: center;
     }
 
     @keyframes fadeInUp {
@@ -209,7 +209,6 @@
       font-style: italic;
     }
 
-    /* Ensure the respond line is centered */
     .rsvp-deadline {
       margin-top: 10px;
       font-style: italic;
@@ -220,7 +219,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
-      text-align: left; /* Form fields should remain left-aligned for readability */
+      text-align: left;
     }
 
     .form-group {
@@ -327,6 +326,7 @@
       transform: scale(1.01);
     }
 
+    /* Gifts section – border removed */
     .gifts-section {
       background: rgba(211, 231, 203, 0.2);
       padding: 1.25rem 1.5rem;
@@ -335,7 +335,6 @@
       font-size: 1rem;
       line-height: 1.6;
       color: #2e3b2e;
-      border: 1px dashed rgba(104, 28, 36, 0.15);
       margin: 0.5rem 0;
     }
 
