@@ -1,16 +1,20 @@
-<!DOCTYPE html>
+<!-- secrets in the city - why are you looking here you cheeky so and so! -->
+
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    
   <title>Kate & Bronson · RSVP</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
-  
-  <style>
-    * {
+
+<!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+
+<!-- style and body -->  
+    <style>
+    {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -30,7 +34,6 @@
       content: "";
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wNSIgLz48L3N2Zz4=');
       background-repeat: repeat;
       pointer-events: none;
       z-index: 1;
@@ -324,8 +327,7 @@
       backdrop-filter: blur(2px);
       transition: border 0.2s, box-shadow 0.2s;
     }
-
-    /* Set accent color for radio buttons and checkboxes */
+     
     input[type="radio"], input[type="checkbox"] {
       accent-color: #681C24;
       width: 1.1rem;
@@ -439,12 +441,14 @@
     html { scroll-behavior: smooth; }
   </style>
 </head>
+  
 <body>
   <img class="deco-img img-top" id="topImage" src="/images/top.png" alt="Top overlapping tattoo" width="225" height="150">
   <img class="deco-img img-bottom" id="bottomImage" src="/images/bottom.png" alt="Bottom overlapping tattoo" width="225" height="150">
 
   <div class="invitation-wrapper">
-    <!-- Step 1: Name prompt card -->
+ 
+    <!-- Name prompt card -->
     <div class="name-prompt-card" id="namePromptCard">
       <h2>Welcome</h2>
       <div class="form-group">
@@ -453,7 +457,7 @@
       <button class="continue-btn" id="continueBtn">Continue</button>
     </div>
 
-    <!-- Step 2: Main RSVP form (hidden initially) -->
+    <!-- Main RSVP form -->
     <div class="form-card" id="formCard">
       <div class="header-reveal">
         <div class="wedding-details">
@@ -673,7 +677,7 @@
           return;
         }
 
-        // Lock images in current position
+      
         const topTransform = window.getComputedStyle(topImg).transform;
         const bottomTransform = window.getComputedStyle(bottomImg).transform;
         topImg.style.transform = topTransform;
