@@ -39,7 +39,6 @@
       z-index: 1;
     }
 
-    /* decorative moving images */
     .deco-img {
       position: fixed;
       width: 225px;
@@ -74,7 +73,6 @@
       padding: 4rem 1.5rem;
     }
 
-    /* cards */
     .form-card, .name-prompt-card {
       max-width: 720px;
       width: 100%;
@@ -145,15 +143,6 @@
       100% { opacity: 1; }
     }
 
-    .form-card.fade-out {
-      opacity: 0 !important;
-      pointer-events: none;
-      animation: none !important;
-    }
-
-    h1, h2, .accent-text, .section-title { color: #681C24; }
-
-    /* header / wedding details */
     .wedding-details {
       text-align: center;
       margin-bottom: 1.8rem;
@@ -305,24 +294,11 @@
       margin-top: 0.3rem;
     }
 
-    .rsvp-closed-message {
-      background: rgba(211, 231, 203, 0.4);
-      border-radius: 40px;
-      padding: 1rem 1rem;
-      margin: 1.2rem 0 0.5rem;
-      font-size: 1rem;
-      font-style: italic;
-      color: #4a2e2e;
-      border-left: 4px solid #681C24;
-      text-align: center;
-    }
-
-    .no-rsvp-note {
+    .heart-note {
       margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #3e4f3e;
-      text-align: center;
-      font-style: normal;
+      font-size: 0.95rem;
+      color: #4a2e2e;
+      font-style: italic;
     }
 
     @media (max-width: 600px) {
@@ -343,7 +319,7 @@
   <img class="deco-img img-bottom" id="bottomImage" src="/images/bottom.png" alt="Bottom botanical tattoo" width="225" height="150" onerror="this.style.opacity='0'">
 
   <div class="invitation-wrapper">
-    <!-- Name prompt card (always visible first) -->
+    <!-- Name prompt card -->
     <div class="name-prompt-card" id="namePromptCard">
       <h2>Welcome</h2>
       <div class="form-group">
@@ -352,23 +328,15 @@
       <button class="continue-btn" id="continueBtn">Continue</button>
     </div>
 
-    <!-- Main card: either RSVP form (before deadline) OR countdown timer (after deadline) -->
+    <!-- Main countdown card (initially hidden) -->
     <div class="form-card" id="formCard"></div>
   </div>
 
   <script>
     (function() {
-      // ---------- WEDDING DATE & TIME: October 24, 2026 at 1:00 PM AEDT (UTC+11) ----------
+      // ---------- WEDDING DATE: October 24, 2026 at 1:00 PM AEDT (UTC+11) ----------
       // AEDT on Oct 24 = UTC+11 => 13:00 AEDT = 02:00 UTC
       const WEDDING_TIMESTAMP = Date.UTC(2026, 9, 24, 2, 0, 0); // Oct 24 2026, 02:00 UTC
-
-      // ---------- DEADLINE: August 3, 2026 (local date) ----------
-      const DEADLINE_DATE = new Date(2026, 7, 3); // August 3, 2026 (month index 7 = August)
-      const today = new Date();
-      // Normalize time for comparison: compare dates (year/month/day) only
-      const isPastDeadline = (today.getFullYear() > DEADLINE_DATE.getFullYear()) ||
-        (today.getFullYear() === DEADLINE_DATE.getFullYear() && today.getMonth() > DEADLINE_DATE.getMonth()) ||
-        (today.getFullYear() === DEADLINE_DATE.getFullYear() && today.getMonth() === DEADLINE_DATE.getMonth() && today.getDate() >= DEADLINE_DATE.getDate());
 
       // DOM elements
       const topImg = document.getElementById('topImage');
@@ -379,9 +347,10 @@
       const continueBtn = document.getElementById('continueBtn');
 
       let scrollEnabled = false;
+      let countdownInterval = null;
       const easeSlow = (t) => Math.pow(t, 3.5);
 
-      // ---- image parallax logic (unchanged, but kept for both modes) ----
+      // ---- image parallax logic ----
       function updateImagePositions() {
         if (!scrollEnabled) return;
         const scrollY = window.scrollY;
@@ -416,9 +385,45 @@
         }
       }
 
-      // -------- Helper: build the core wedding info (location, dress code) used in both modes ----------
-      function getWeddingInfoHTML() {
-        return `
+      // Helper: escape HTML
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        });
+      }
+
+      // Build the countdown view (replaces RSVP form)
+      function buildCountdownView(guestName) {
+        if (countdownInterval) clearInterval(countdownInterval);
+        formCard.innerHTML = '';
+
+        const container = document.createElement('div');
+        container.className = 'content-reveal';
+
+        // Wedding header with guest name
+        const headerDiv = document.createElement('div');
+        headerDiv.innerHTML = `
+          <div class="wedding-details">
+            <div class="guest-name-line">${escapeHtml(guestName)},</div>
+            <div class="invited-line">you are invited</div>
+            <div class="sub-invite">to the wedding of</div>
+            <div class="names">
+              <span>Kate</span>
+              <span class="ampersand">&</span>
+              <span>Bronson</span>
+            </div>
+            <div class="date">24 · 10 · 2026</div>
+          </div>
+        `;
+        container.appendChild(headerDiv);
+
+        // Location and dress code
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = `
           <div class="location-block">
             <div class="loc-item">
               <strong>Ceremony</strong> Cook Park, cnr Clinton St & Kite St, Orange NSW
@@ -433,82 +438,31 @@
           </div>
           <div class="dress-code">Cocktail attire</div>
         `;
-      }
-
-      // shared header (guest name, invite, names, date)
-      function getWeddingHeaderHTML(guestNameDisplay) {
-        return `
-          <div class="wedding-details">
-            <div class="guest-name-line">${escapeHtml(guestNameDisplay)},</div>
-            <div class="invited-line">you are invited</div>
-            <div class="sub-invite">to the wedding of</div>
-            <div class="names">
-              <span>Kate</span>
-              <span class="ampersand">&</span>
-              <span>Bronson</span>
-            </div>
-            <div class="date">24 · 10 · 2026</div>
-          </div>
-        `;
-      }
-
-      // simple escape helper
-      function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-          if (m === '&') return '&amp;';
-          if (m === '<') return '&lt;';
-          if (m === '>') return '&gt;';
-          return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-          return c;
-        });
-      }
-
-      // ---------- COUNTDOWN TIMER VIEW (post-deadline) ----------
-      let countdownInterval = null;
-      function buildCountdownView(guestName) {
-        // clear any previous content and stop old timer
-        if (countdownInterval) clearInterval(countdownInterval);
-        formCard.innerHTML = ''; // reset
-
-        // main structure
-        const container = document.createElement('div');
-        container.className = 'content-reveal';
-        // add header + wedding details
-        const headerDiv = document.createElement('div');
-        headerDiv.innerHTML = getWeddingHeaderHTML(guestName);
-        container.appendChild(headerDiv);
-
-        // location & dress code
-        const infoDiv = document.createElement('div');
-        infoDiv.innerHTML = getWeddingInfoHTML();
         container.appendChild(infoDiv);
 
-        // countdown section + closed message
+        // Countdown timer
         const countdownSection = document.createElement('div');
         countdownSection.className = 'countdown-container';
         countdownSection.innerHTML = `
-          <div class="countdown-title">❤️ RSVPs are now closed · We count the moments until we celebrate with you ❤️</div>
+          <div class="countdown-title">❤️ Counting down to our special day ❤️</div>
           <div class="timer-grid" id="timerGrid">
             <div class="time-block"><div class="time-number" id="daysLeft">00</div><div class="time-label">DAYS</div></div>
             <div class="time-block"><div class="time-number" id="hoursLeft">00</div><div class="time-label">HOURS</div></div>
             <div class="time-block"><div class="time-number" id="minsLeft">00</div><div class="time-label">MINUTES</div></div>
             <div class="time-block"><div class="time-number" id="secsLeft">00</div><div class="time-label">SECONDS</div></div>
           </div>
-          <div class="rsvp-closed-message">✨ The guest list is final, but we can't wait to see you at the ceremony ✨</div>
-          <div class="no-rsvp-note">If you have any urgent questions, please reach out to Kate (we know you will anyway).</div>
+          <div class="heart-note">✨ We can't wait to celebrate with you ✨</div>
         `;
         container.appendChild(countdownSection);
         formCard.appendChild(container);
         formCard.classList.add('visible');
 
-        // start live countdown
+        // Timer update function (world‑safe using UTC target)
         function updateCountdown() {
           const now = Date.now(); // UTC milliseconds
           const distance = WEDDING_TIMESTAMP - now;
           if (distance <= 0) {
-            // wedding has arrived or passed
+            // Wedding day has arrived
             document.getElementById('daysLeft').innerText = '00';
             document.getElementById('hoursLeft').innerText = '00';
             document.getElementById('minsLeft').innerText = '00';
@@ -544,140 +498,7 @@
         countdownInterval = setInterval(updateCountdown, 1000);
       }
 
-      // ---------- NORMAL RSVP FORM (BEFORE DEADLINE) ----------
-      let rsvpFormSubmitted = false; // avoid double fade
-      function buildOriginalRsvpForm(guestName) {
-        if (countdownInterval) clearInterval(countdownInterval);
-        // recreate the complete RSVP form (same as original design)
-        formCard.innerHTML = ''; 
-        const mainDiv = document.createElement('div');
-        mainDiv.innerHTML = `
-          <div class="header-reveal">
-            ${getWeddingHeaderHTML(guestName)}
-          </div>
-          <div class="content-reveal">
-            ${getWeddingInfoHTML()}
-            <div class="deadline-section">
-              <p class="rsvp-deadline">Kindly respond by August 2</p>
-            </div>
-            <form class="rsvp-form" id="weddingRsvp" action="https://api.formbox.app/s/fe0bzkpq3y1o3ubdgwh8b3p5" method="POST">
-              <input type="hidden" name="fullName" id="hiddenFullName" value="${escapeHtml(guestName)}">
-              
-              <div class="form-group">
-                <label>How would you like us to contact you? <span class="hint">(either of these work for us.)</span></label>
-                <div class="contact-fields">
-                  <input type="tel" name="phone" placeholder="Phone">
-                  <input type="email" name="email" placeholder="Email">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>Will you be in attendance?</label>
-                <div class="radio-group">
-                  <label><input type="radio" name="attendance" value="both" required> Both ceremony & reception</label>
-                  <label><input type="radio" name="attendance" value="ceremony"> Ceremony only</label>
-                  <label><input type="radio" name="attendance" value="reception"> Reception only</label>
-                  <label><input type="radio" name="attendance" value="none"> Unable to attend</label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>Dietary restrictions / preferences</label>
-                <textarea name="dietary" id="dietary" rows="1" placeholder="e.g. vegetarian, gluten-free, allergies..."></textarea>
-              </div>
-
-              <div class="form-group">
-                <label>Accessibility requirements</label>
-                <textarea name="accessibility" id="accessibility" rows="1" placeholder="e.g. wheelchair access, seating needs..."></textarea>
-              </div>
-
-              <div class="form-group">
-                <label>Travel arrangements <span class="hint">(we are planning a charter bus. Which of these suit you best?)</span></label>
-                <div class="bus-options">
-                  <label><input type="checkbox" name="bus" value="bus_ceremony"> Bus to ceremony</label>
-                  <label><input type="checkbox" name="bus" value="bus_reception"> Bus to reception</label>
-                  <label><input type="checkbox" name="bus" value="return_bathurst"> Return to Bathurst</label>
-                  <label><input type="checkbox" name="bus" value="return_orange"> Return to Orange</label>
-                  <label><input type="checkbox" name="bus" value="own"> I'll make my own way</label>
-                </div>
-                <div class="inline-hint">You may choose more than one option if needed.</div>
-              </div>
-
-              <div class="form-group">
-                <label>Will you be bringing children?</label>
-                <div class="radio-group">
-                  <label><input type="radio" name="children" value="yes_both" required> Yes, to both ceremony & reception</label>
-                  <label><input type="radio" name="children" value="yes_ceremony"> Yes, to the ceremony only</label>
-                  <label><input type="radio" name="children" value="no"> No children</label>
-                </div>
-              </div>
-
-              <div class="gifts-section">
-                <p class="presence-line">Your presence is the greatest gift</p>
-                <p>We do not have a registry, and there is absolutely no obligation to give a gift.<br>
-                Should you wish to honour us with something, a contribution toward our future together would be warmly received,<br>
-                or a donation in lieu to 
-                <a href="https://kidney.org.au/" target="_blank" rel="noopener noreferrer" class="charity-link">
-                  <span class="charity">Kidney Health Australia</span>
-                </a> 
-                would mean the world.</p>
-              </div>
-
-              <button type="submit" class="submit-btn">Send RSVP</button>
-              <p style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; font-style: italic; color: #3e4f3e;">If you have any questions, please reach out to either of us (let's be honest, Kate).<br>We look forward to celebrating with you.</p>
-            </form>
-          </div>
-        `;
-        formCard.appendChild(mainDiv);
-        formCard.classList.add('visible');
-
-        // attach auto-resize to textareas
-        const textareas = formCard.querySelectorAll('textarea');
-        function autoResize(ta) {
-          ta.style.height = 'auto';
-          ta.style.height = ta.scrollHeight + 'px';
-        }
-        textareas.forEach(ta => {
-          autoResize(ta);
-          ta.addEventListener('input', () => autoResize(ta));
-        });
-
-        // attach form submission logic
-        const rsvpFormElem = document.getElementById('weddingRsvp');
-        if (rsvpFormElem) {
-          // remove any previous listener to avoid double
-          const newForm = rsvpFormElem.cloneNode(true);
-          rsvpFormElem.parentNode.replaceChild(newForm, rsvpFormElem);
-          const finalForm = document.getElementById('weddingRsvp');
-          
-          finalForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (rsvpFormSubmitted) return;
-            
-            // validation: at least one bus option
-            const busChecks = finalForm.querySelectorAll('input[name="bus"]');
-            if (!Array.from(busChecks).some(cb => cb.checked)) {
-              alert('Please select at least one travel/bus option.');
-              return;
-            }
-            const phoneVal = finalForm.querySelector('input[name="phone"]').value.trim();
-            const emailVal = finalForm.querySelector('input[name="email"]').value.trim();
-            if (!phoneVal && !emailVal) {
-              alert('Please share a phone number or email address so we can reach you if needed.');
-              return;
-            }
-            
-            // trigger fade out effect
-            rsvpFormSubmitted = true;
-            formCard.classList.add('fade-out');
-            setTimeout(() => {
-              finalForm.submit();
-            }, 600);
-          });
-        }
-      }
-
-      // ---------- MAIN PROCEED LOGIC: choose based on deadline ----------
+      // Proceed after name entry
       function proceedWithName() {
         const guestNameRaw = guestNameInput.value.trim();
         if (!guestNameRaw) {
@@ -686,18 +507,10 @@
         }
         const guestNameDisplay = escapeHtml(guestNameRaw);
         
-        // Hide name card, show main card
         namePromptCard.classList.add('hidden');
+        buildCountdownView(guestNameDisplay);
         
-        if (isPastDeadline) {
-          // After deadline: Show COUNTDOWN timer (no RSVP fields)
-          buildCountdownView(guestNameDisplay);
-        } else {
-          // Before deadline: normal RSVP form
-          buildOriginalRsvpForm(guestNameDisplay);
-        }
-        
-        // enable parallax scrolling for images
+        // Enable parallax scrolling
         scrollEnabled = true;
         updateImagePositions();
         window.addEventListener('scroll', onScroll);
@@ -705,8 +518,8 @@
           if (scrollEnabled) updateImagePositions();
         });
       }
-      
-      // attach event listeners to continue
+
+      // Event listeners
       continueBtn.addEventListener('click', proceedWithName);
       guestNameInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -714,19 +527,12 @@
           proceedWithName();
         }
       });
-      
-      // initial image position adjustments (before scroll)
+
       window.addEventListener('load', () => {
-        if (topImg && bottomImg) {
-          updateImagePositions();
-        }
-        // if deadline already passed and no action yet, nothing is forced – name prompt stays.
+        if (topImg && bottomImg) updateImagePositions();
       });
-      
-      // handle potential image load updates
       if (topImg) topImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
       if (bottomImg) bottomImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
-      
     })();
   </script>
 </body>
