@@ -495,7 +495,19 @@
 <form class="rsvp-form" id="weddingRsvp" action="https://api.formbox.app/s/fe0bzkpq3y1o3ubdgwh8b3p5" method="POST">
 <input type="hidden" name="fullName" id="hiddenFullName">
 
- <div class="gifts-section">
+  <!-- Countdown Timer -->
+  <div class="countdown-container">
+    <div class="countdown-title"> Counting down to the moments </div>
+    <div class="timer-grid">
+      <div class="time-block"><div class="time-number" id="daysLeft">00</div><div class="time-label">DAYS</div></div>
+      <div class="time-block"><div class="time-number" id="hoursLeft">00</div><div class="time-label">HOURS</div></div>
+      <div class="time-block"><div class="time-number" id="minsLeft">00</div><div class="time-label">MINUTES</div></div>
+      <div class="time-block"><div class="time-number" id="secsLeft">00</div><div class="time-label">SECONDS</div></div>
+    </div>
+    <div class="heart-note"> We can't wait to celebrate with you </div>
+  </div>
+  
+  <div class="gifts-section">
   <p class="presence-line">A note on transport</p>
   <p>We have arranged a bus charter for those who requested in their invitation, as follows:<br>
   McDonalds West Bathurst to Cook Park -  11:45am<br>
@@ -516,46 +528,7 @@
   would mean the world.</p>
 </div>
 
- <!-- Countdown Timer -->
-        function updateCountdown() {
-          const now = Date.now(); // UTC milliseconds
-          const distance = WEDDING_TIMESTAMP - now;
-          if (distance <= 0) {
-            // Wedding day has arrived
-            document.getElementById('daysLeft').innerText = '00';
-            document.getElementById('hoursLeft').innerText = '00';
-            document.getElementById('minsLeft').innerText = '00';
-            document.getElementById('secsLeft').innerText = '00';
-            if (countdownInterval) clearInterval(countdownInterval);
-            const timerGrid = document.getElementById('timerGrid');
-            if (timerGrid) {
-              const message = document.createElement('div');
-              message.style.marginTop = '1rem';
-              message.style.fontSize = '1.2rem';
-              message.style.fontWeight = 'bold';
-              message.style.color = '#681C24';
-              message.innerText = '🎉 Today is the day! We are so excited 🎉';
-              timerGrid.parentNode.appendChild(message);
-            }
-            return;
-          }
-          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((distance % (86400000)) / (3600000));
-          const minutes = Math.floor((distance % 3600000) / 60000);
-          const seconds = Math.floor((distance % 60000) / 1000);
-          
-          const daysElem = document.getElementById('daysLeft');
-          const hoursElem = document.getElementById('hoursLeft');
-          const minsElem = document.getElementById('minsLeft');
-          const secsElem = document.getElementById('secsLeft');
-          if (daysElem) daysElem.innerText = days < 10 ? '0' + days : days;
-          if (hoursElem) hoursElem.innerText = hours < 10 ? '0' + hours : hours;
-          if (minsElem) minsElem.innerText = minutes < 10 ? '0' + minutes : minutes;
-          if (secsElem) secsElem.innerText = seconds < 10 ? '0' + seconds : seconds;
-        }
-        updateCountdown();
-        countdownInterval = setInterval(updateCountdown, 1000);
-      }
+  
 
           <p style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; font-style: italic; color: #3e4f3e;">If you have any questions, please reach out to either of us (let's be honest, Kate).<br>We look forward to celebrating with you.</p>
         </form>
@@ -702,6 +675,30 @@
         document.querySelectorAll('textarea').forEach(autoResize);
       });
     })();
+
+const WEDDING_TIMESTAMP = Date.UTC(2026, 9, 24, 2, 0, 0);
+
+function updateTimer() {
+  const now = Date.now();
+  const distance = WEDDING_TIMESTAMP - now;
+  if (distance <= 0) {
+    document.getElementById('daysLeft').innerText = '00';
+    document.getElementById('hoursLeft').innerText = '00';
+    document.getElementById('minsLeft').innerText = '00';
+    document.getElementById('secsLeft').innerText = '00';
+    return;
+  }
+  const days = Math.floor(distance / (1000*60*60*24));
+  const hours = Math.floor((distance % 86400000) / 3600000);
+  const minutes = Math.floor((distance % 3600000) / 60000);
+  const seconds = Math.floor((distance % 60000) / 1000);
+  document.getElementById('daysLeft').innerText = days < 10 ? '0'+days : days;
+  document.getElementById('hoursLeft').innerText = hours < 10 ? '0'+hours : hours;
+  document.getElementById('minsLeft').innerText = minutes < 10 ? '0'+minutes : minutes;
+  document.getElementById('secsLeft').innerText = seconds < 10 ? '0'+seconds : seconds;
+}
+updateTimer();
+setInterval(updateTimer, 1000);
   </script>
 </body>
 </html>
