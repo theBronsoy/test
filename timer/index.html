@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kate & Bronson · Wedding Countdown</title>
+
+  <!-- Google Fonts (Playfair) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 120vh;
+      font-family: 'Playfair', 'Times New Roman', serif;
+      background: linear-gradient(145deg, #D3E7CB 0%, #D3E7CB 50%, #A6BFA7 75%, #88A58F 100%);
+      background-blend-mode: overlay;
+      position: relative;
+      color: #1e2e1e;
+      line-height: 1.5;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-repeat: repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* decorative moving images */
+    .deco-img {
+      position: fixed;
+      width: 225px;
+      height: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 2;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.06));
+      transition: transform 0.05s linear;
+      will-change: transform;
+      opacity: 0;
+      animation: fadeInImage 1.2s ease forwards;
+      animation-delay: 0.3s;
+    }
+
+    .img-top { top: 20px; }
+    .img-bottom { bottom: 20px; }
+
+    @keyframes fadeInImage {
+      0% { opacity: 0; }
+      100% { opacity: 0.9; }
+    }
+
+    .invitation-wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 4rem 1.5rem;
+    }
+
+    /* cards */
+    .form-card, .name-prompt-card {
+      max-width: 720px;
+      width: 100%;
+      background: rgba(255, 250, 240, 0.45);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      padding: 2.8rem 2.5rem;
+      border-radius: 32px;
+      box-shadow: 0 25px 40px -10px rgba(30, 20, 5, 0.15);
+      border: 1px solid rgba(104, 28, 36, 0.2);
+      transition: opacity 0.6s ease;
+    }
+
+    .name-prompt-card {
+      text-align: center;
+      opacity: 0;
+      animation: fadeInCard 1s ease forwards;
+      animation-delay: 1.2s;
+    }
+
+    .name-prompt-card.hidden {
+      display: none;
+    }
+
+    .name-prompt-card h2 {
+      color: #681C24;
+      font-size: 2rem;
+      font-weight: 400;
+      margin-bottom: 1.5rem;
+    }
+
+    .name-prompt-card input {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    .continue-btn {
+      background: #681C24;
+      color: #f9f3e7;
+      border: none;
+      padding: 0.9rem 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.1s;
+      letter-spacing: 1px;
+      box-shadow: 0 8px 14px rgba(104,28,36,0.2);
+    }
+
+    .continue-btn:hover {
+      background: #4e1420;
+      transform: scale(1.01);
+    }
+
+    .form-card {
+      opacity: 0;
+      display: none;
+    }
+
+    .form-card.visible {
+      display: block;
+      animation: fadeInCard 0.8s ease forwards;
+    }
+
+    @keyframes fadeInCard {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .form-card.fade-out {
+      opacity: 0 !important;
+      pointer-events: none;
+      animation: none !important;
+    }
+
+    h1, h2, .accent-text, .section-title { color: #681C24; }
+
+    /* header / wedding details */
+    .wedding-details {
+      text-align: center;
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid #681C24;
+      padding-bottom: 1.2rem;
+    }
+
+    .guest-name-line {
+      font-size: 3.2rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 0.2rem;
+      color: #681C24;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.02);
+      line-height: 1.2;
+    }
+
+    .invited-line {
+      font-size: 3.2rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 0.2rem;
+      color: #681C24;
+    }
+
+    .sub-invite {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #2e3b2e;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-weight: 400;
+    }
+
+    .names {
+      font-size: 2.8rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      line-height: 1.2;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .ampersand {
+      font-size: 2em;
+      font-style: italic;
+      font-weight: 400;
+      display: inline-block;
+      margin: 0 0.05em;
+    }
+
+    .date {
+      font-size: 1.25rem;
+      color: #2c3e2c;
+      margin-top: 0.3rem;
+    }
+
+    .location-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 0 0 0.75rem;
+      padding: 1rem 1.5rem;
+    }
+
+    .loc-item {
+      font-size: 1rem;
+    }
+
+    .loc-item strong {
+      color: #681C24;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    .map-pin {
+      display: inline-block;
+      margin-left: 0.5rem;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: transform 0.2s ease;
+    }
+
+    .map-pin:hover { transform: scale(1.2); }
+
+    .dress-code {
+      font-size: 1.15rem;
+      color: #2c3e2c;
+      margin-top: 0.25rem;
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* COUNTDOWN TIMER STYLES */
+    .countdown-container {
+      text-align: center;
+      margin: 1.8rem 0 1.5rem;
+      padding: 1rem 0.5rem;
+      background: rgba(104, 28, 36, 0.05);
+      border-radius: 48px;
+      backdrop-filter: blur(2px);
+    }
+
+    .countdown-title {
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: #681C24;
+      margin-bottom: 1.2rem;
+      letter-spacing: 1px;
+    }
+
+    .timer-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem 1.8rem;
+      margin: 1rem 0;
+    }
+
+    .time-block {
+      background: rgba(255, 250, 240, 0.7);
+      backdrop-filter: blur(4px);
+      border-radius: 28px;
+      padding: 0.7rem 1.2rem;
+      min-width: 85px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .time-number {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: #681C24;
+      line-height: 1;
+      letter-spacing: 1px;
+    }
+
+    .time-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 500;
+      color: #2e3b2e;
+      margin-top: 0.3rem;
+    }
+
+    .rsvp-closed-message {
+      background: rgba(211, 231, 203, 0.4);
+      border-radius: 40px;
+      padding: 1rem 1rem;
+      margin: 1.2rem 0 0.5rem;
+      font-size: 1rem;
+      font-style: italic;
+      color: #4a2e2e;
+      border-left: 4px solid #681C24;
+      text-align: center;
+    }
+
+    .no-rsvp-note {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #3e4f3e;
+      text-align: center;
+      font-style: normal;
+    }
+
+    @media (max-width: 600px) {
+      .form-card, .name-prompt-card { padding: 1.8rem 1.2rem; }
+      .guest-name-line, .invited-line { font-size: 2.5rem; }
+      .sub-invite { font-size: 1rem; }
+      .names { font-size: 2.2rem; }
+      .deco-img { width: 180px; }
+      .time-number { font-size: 1.8rem; }
+      .time-block { min-width: 70px; padding: 0.5rem 0.8rem; }
+    }
+
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+  <img class="deco-img img-top" id="topImage" src="/images/top.png" alt="Top botanical tattoo" width="225" height="150" onerror="this.style.opacity='0'">
+  <img class="deco-img img-bottom" id="bottomImage" src="/images/bottom.png" alt="Bottom botanical tattoo" width="225" height="150" onerror="this.style.opacity='0'">
+
+  <div class="invitation-wrapper">
+    <!-- Name prompt card (always visible first) -->
+    <div class="name-prompt-card" id="namePromptCard">
+      <h2>Welcome</h2>
+      <div class="form-group">
+        <input type="text" id="guestNameInput" placeholder="please enter your preferred full name" autocomplete="off">
+      </div>
+      <button class="continue-btn" id="continueBtn">Continue</button>
+    </div>
+
+    <!-- Main card: either RSVP form (before deadline) OR countdown timer (after deadline) -->
+    <div class="form-card" id="formCard"></div>
+  </div>
+
+  <script>
+    (function() {
+      // ---------- WEDDING DATE & TIME: October 24, 2026 at 1:00 PM AEDT (UTC+11) ----------
+      // AEDT on Oct 24 = UTC+11 => 13:00 AEDT = 02:00 UTC
+      const WEDDING_TIMESTAMP = Date.UTC(2026, 9, 24, 2, 0, 0); // Oct 24 2026, 02:00 UTC
+
+      // ---------- DEADLINE: August 3, 2026 (local date) ----------
+      const DEADLINE_DATE = new Date(2026, 7, 3); // August 3, 2026 (month index 7 = August)
+      const today = new Date();
+      // Normalize time for comparison: compare dates (year/month/day) only
+      const isPastDeadline = (today.getFullYear() > DEADLINE_DATE.getFullYear()) ||
+        (today.getFullYear() === DEADLINE_DATE.getFullYear() && today.getMonth() > DEADLINE_DATE.getMonth()) ||
+        (today.getFullYear() === DEADLINE_DATE.getFullYear() && today.getMonth() === DEADLINE_DATE.getMonth() && today.getDate() >= DEADLINE_DATE.getDate());
+
+      // DOM elements
+      const topImg = document.getElementById('topImage');
+      const bottomImg = document.getElementById('bottomImage');
+      const namePromptCard = document.getElementById('namePromptCard');
+      const formCard = document.getElementById('formCard');
+      const guestNameInput = document.getElementById('guestNameInput');
+      const continueBtn = document.getElementById('continueBtn');
+
+      let scrollEnabled = false;
+      const easeSlow = (t) => Math.pow(t, 3.5);
+
+      // ---- image parallax logic (unchanged, but kept for both modes) ----
+      function updateImagePositions() {
+        if (!scrollEnabled) return;
+        const scrollY = window.scrollY;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const rawProgress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
+        const progress = easeSlow(rawProgress);
+
+        const topHeight = topImg.offsetHeight || 150;
+        const bottomHeight = bottomImg.offsetHeight || 150;
+        const viewportHeight = window.innerHeight;
+        const topInitialTop = 20;
+        const bottomInitialBottom = 20;
+        const centerY = viewportHeight / 2;
+
+        const topTargetMove = centerY - topInitialTop - (topHeight / 2);
+        const bottomInitialTop = viewportHeight - bottomHeight - bottomInitialBottom;
+        const bottomTargetMove = centerY - bottomInitialTop - (bottomHeight / 2);
+
+        topImg.style.transform = `translateX(-50%) translateY(${progress * topTargetMove}px)`;
+        bottomImg.style.transform = `translateX(-50%) translateY(${progress * bottomTargetMove}px)`;
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (!scrollEnabled) return;
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateImagePositions();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      // -------- Helper: build the core wedding info (location, dress code) used in both modes ----------
+      function getWeddingInfoHTML() {
+        return `
+          <div class="location-block">
+            <div class="loc-item">
+              <strong>Ceremony</strong> Cook Park, cnr Clinton St & Kite St, Orange NSW
+              <a class="map-pin" href="https://www.google.com/maps?q=-33.28398663783832,149.0903074530388" target="_blank" rel="noopener noreferrer" title="Open in Google Maps">📍</a>
+            </div>
+            <p>1:00pm - 3:00pm, arriving from 12:30pm</p>
+            <div class="loc-item">
+              <strong>Reception</strong> Beekeepers Inn, 2319 Mitchell Hwy, Vittoria NSW
+              <a class="map-pin" href="https://www.google.com/maps/search/?api=1&query=Beekeepers+Inn+2319+Mitchell+Hwy+Vittoria+NSW" target="_blank" rel="noopener noreferrer" title="Open in Google Maps">📍</a>
+            </div>
+            <p>5:00pm - 10:00pm, arriving from 4:00pm</p>
+          </div>
+          <div class="dress-code">Cocktail attire</div>
+        `;
+      }
+
+      // shared header (guest name, invite, names, date)
+      function getWeddingHeaderHTML(guestNameDisplay) {
+        return `
+          <div class="wedding-details">
+            <div class="guest-name-line">${escapeHtml(guestNameDisplay)},</div>
+            <div class="invited-line">you are invited</div>
+            <div class="sub-invite">to the wedding of</div>
+            <div class="names">
+              <span>Kate</span>
+              <span class="ampersand">&</span>
+              <span>Bronson</span>
+            </div>
+            <div class="date">24 · 10 · 2026</div>
+          </div>
+        `;
+      }
+
+      // simple escape helper
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+          return c;
+        });
+      }
+
+      // ---------- COUNTDOWN TIMER VIEW (post-deadline) ----------
+      let countdownInterval = null;
+      function buildCountdownView(guestName) {
+        // clear any previous content and stop old timer
+        if (countdownInterval) clearInterval(countdownInterval);
+        formCard.innerHTML = ''; // reset
+
+        // main structure
+        const container = document.createElement('div');
+        container.className = 'content-reveal';
+        // add header + wedding details
+        const headerDiv = document.createElement('div');
+        headerDiv.innerHTML = getWeddingHeaderHTML(guestName);
+        container.appendChild(headerDiv);
+
+        // location & dress code
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = getWeddingInfoHTML();
+        container.appendChild(infoDiv);
+
+        // countdown section + closed message
+        const countdownSection = document.createElement('div');
+        countdownSection.className = 'countdown-container';
+        countdownSection.innerHTML = `
+          <div class="countdown-title">❤️ RSVPs are now closed · We count the moments until we celebrate with you ❤️</div>
+          <div class="timer-grid" id="timerGrid">
+            <div class="time-block"><div class="time-number" id="daysLeft">00</div><div class="time-label">DAYS</div></div>
+            <div class="time-block"><div class="time-number" id="hoursLeft">00</div><div class="time-label">HOURS</div></div>
+            <div class="time-block"><div class="time-number" id="minsLeft">00</div><div class="time-label">MINUTES</div></div>
+            <div class="time-block"><div class="time-number" id="secsLeft">00</div><div class="time-label">SECONDS</div></div>
+          </div>
+          <div class="rsvp-closed-message">✨ The guest list is final, but we can't wait to see you at the ceremony ✨</div>
+          <div class="no-rsvp-note">If you have any urgent questions, please reach out to Kate (we know you will anyway).</div>
+        `;
+        container.appendChild(countdownSection);
+        formCard.appendChild(container);
+        formCard.classList.add('visible');
+
+        // start live countdown
+        function updateCountdown() {
+          const now = Date.now(); // UTC milliseconds
+          const distance = WEDDING_TIMESTAMP - now;
+          if (distance <= 0) {
+            // wedding has arrived or passed
+            document.getElementById('daysLeft').innerText = '00';
+            document.getElementById('hoursLeft').innerText = '00';
+            document.getElementById('minsLeft').innerText = '00';
+            document.getElementById('secsLeft').innerText = '00';
+            if (countdownInterval) clearInterval(countdownInterval);
+            const timerGrid = document.getElementById('timerGrid');
+            if (timerGrid) {
+              const message = document.createElement('div');
+              message.style.marginTop = '1rem';
+              message.style.fontSize = '1.2rem';
+              message.style.fontWeight = 'bold';
+              message.style.color = '#681C24';
+              message.innerText = '🎉 Today is the day! We are so excited 🎉';
+              timerGrid.parentNode.appendChild(message);
+            }
+            return;
+          }
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (86400000)) / (3600000));
+          const minutes = Math.floor((distance % 3600000) / 60000);
+          const seconds = Math.floor((distance % 60000) / 1000);
+          
+          const daysElem = document.getElementById('daysLeft');
+          const hoursElem = document.getElementById('hoursLeft');
+          const minsElem = document.getElementById('minsLeft');
+          const secsElem = document.getElementById('secsLeft');
+          if (daysElem) daysElem.innerText = days < 10 ? '0' + days : days;
+          if (hoursElem) hoursElem.innerText = hours < 10 ? '0' + hours : hours;
+          if (minsElem) minsElem.innerText = minutes < 10 ? '0' + minutes : minutes;
+          if (secsElem) secsElem.innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+      }
+
+      // ---------- NORMAL RSVP FORM (BEFORE DEADLINE) ----------
+      let rsvpFormSubmitted = false; // avoid double fade
+      function buildOriginalRsvpForm(guestName) {
+        if (countdownInterval) clearInterval(countdownInterval);
+        // recreate the complete RSVP form (same as original design)
+        formCard.innerHTML = ''; 
+        const mainDiv = document.createElement('div');
+        mainDiv.innerHTML = `
+          <div class="header-reveal">
+            ${getWeddingHeaderHTML(guestName)}
+          </div>
+          <div class="content-reveal">
+            ${getWeddingInfoHTML()}
+            <div class="deadline-section">
+              <p class="rsvp-deadline">Kindly respond by August 2</p>
+            </div>
+            <form class="rsvp-form" id="weddingRsvp" action="https://api.formbox.app/s/fe0bzkpq3y1o3ubdgwh8b3p5" method="POST">
+              <input type="hidden" name="fullName" id="hiddenFullName" value="${escapeHtml(guestName)}">
+              
+              <div class="form-group">
+                <label>How would you like us to contact you? <span class="hint">(either of these work for us.)</span></label>
+                <div class="contact-fields">
+                  <input type="tel" name="phone" placeholder="Phone">
+                  <input type="email" name="email" placeholder="Email">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Will you be in attendance?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="attendance" value="both" required> Both ceremony & reception</label>
+                  <label><input type="radio" name="attendance" value="ceremony"> Ceremony only</label>
+                  <label><input type="radio" name="attendance" value="reception"> Reception only</label>
+                  <label><input type="radio" name="attendance" value="none"> Unable to attend</label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Dietary restrictions / preferences</label>
+                <textarea name="dietary" id="dietary" rows="1" placeholder="e.g. vegetarian, gluten-free, allergies..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Accessibility requirements</label>
+                <textarea name="accessibility" id="accessibility" rows="1" placeholder="e.g. wheelchair access, seating needs..."></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Travel arrangements <span class="hint">(we are planning a charter bus. Which of these suit you best?)</span></label>
+                <div class="bus-options">
+                  <label><input type="checkbox" name="bus" value="bus_ceremony"> Bus to ceremony</label>
+                  <label><input type="checkbox" name="bus" value="bus_reception"> Bus to reception</label>
+                  <label><input type="checkbox" name="bus" value="return_bathurst"> Return to Bathurst</label>
+                  <label><input type="checkbox" name="bus" value="return_orange"> Return to Orange</label>
+                  <label><input type="checkbox" name="bus" value="own"> I'll make my own way</label>
+                </div>
+                <div class="inline-hint">You may choose more than one option if needed.</div>
+              </div>
+
+              <div class="form-group">
+                <label>Will you be bringing children?</label>
+                <div class="radio-group">
+                  <label><input type="radio" name="children" value="yes_both" required> Yes, to both ceremony & reception</label>
+                  <label><input type="radio" name="children" value="yes_ceremony"> Yes, to the ceremony only</label>
+                  <label><input type="radio" name="children" value="no"> No children</label>
+                </div>
+              </div>
+
+              <div class="gifts-section">
+                <p class="presence-line">Your presence is the greatest gift</p>
+                <p>We do not have a registry, and there is absolutely no obligation to give a gift.<br>
+                Should you wish to honour us with something, a contribution toward our future together would be warmly received,<br>
+                or a donation in lieu to 
+                <a href="https://kidney.org.au/" target="_blank" rel="noopener noreferrer" class="charity-link">
+                  <span class="charity">Kidney Health Australia</span>
+                </a> 
+                would mean the world.</p>
+              </div>
+
+              <button type="submit" class="submit-btn">Send RSVP</button>
+              <p style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; font-style: italic; color: #3e4f3e;">If you have any questions, please reach out to either of us (let's be honest, Kate).<br>We look forward to celebrating with you.</p>
+            </form>
+          </div>
+        `;
+        formCard.appendChild(mainDiv);
+        formCard.classList.add('visible');
+
+        // attach auto-resize to textareas
+        const textareas = formCard.querySelectorAll('textarea');
+        function autoResize(ta) {
+          ta.style.height = 'auto';
+          ta.style.height = ta.scrollHeight + 'px';
+        }
+        textareas.forEach(ta => {
+          autoResize(ta);
+          ta.addEventListener('input', () => autoResize(ta));
+        });
+
+        // attach form submission logic
+        const rsvpFormElem = document.getElementById('weddingRsvp');
+        if (rsvpFormElem) {
+          // remove any previous listener to avoid double
+          const newForm = rsvpFormElem.cloneNode(true);
+          rsvpFormElem.parentNode.replaceChild(newForm, rsvpFormElem);
+          const finalForm = document.getElementById('weddingRsvp');
+          
+          finalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (rsvpFormSubmitted) return;
+            
+            // validation: at least one bus option
+            const busChecks = finalForm.querySelectorAll('input[name="bus"]');
+            if (!Array.from(busChecks).some(cb => cb.checked)) {
+              alert('Please select at least one travel/bus option.');
+              return;
+            }
+            const phoneVal = finalForm.querySelector('input[name="phone"]').value.trim();
+            const emailVal = finalForm.querySelector('input[name="email"]').value.trim();
+            if (!phoneVal && !emailVal) {
+              alert('Please share a phone number or email address so we can reach you if needed.');
+              return;
+            }
+            
+            // trigger fade out effect
+            rsvpFormSubmitted = true;
+            formCard.classList.add('fade-out');
+            setTimeout(() => {
+              finalForm.submit();
+            }, 600);
+          });
+        }
+      }
+
+      // ---------- MAIN PROCEED LOGIC: choose based on deadline ----------
+      function proceedWithName() {
+        const guestNameRaw = guestNameInput.value.trim();
+        if (!guestNameRaw) {
+          alert('Please enter your name to continue.');
+          return;
+        }
+        const guestNameDisplay = escapeHtml(guestNameRaw);
+        
+        // Hide name card, show main card
+        namePromptCard.classList.add('hidden');
+        
+        if (isPastDeadline) {
+          // After deadline: Show COUNTDOWN timer (no RSVP fields)
+          buildCountdownView(guestNameDisplay);
+        } else {
+          // Before deadline: normal RSVP form
+          buildOriginalRsvpForm(guestNameDisplay);
+        }
+        
+        // enable parallax scrolling for images
+        scrollEnabled = true;
+        updateImagePositions();
+        window.addEventListener('scroll', onScroll);
+        window.addEventListener('resize', () => {
+          if (scrollEnabled) updateImagePositions();
+        });
+      }
+      
+      // attach event listeners to continue
+      continueBtn.addEventListener('click', proceedWithName);
+      guestNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          proceedWithName();
+        }
+      });
+      
+      // initial image position adjustments (before scroll)
+      window.addEventListener('load', () => {
+        if (topImg && bottomImg) {
+          updateImagePositions();
+        }
+        // if deadline already passed and no action yet, nothing is forced – name prompt stays.
+      });
+      
+      // handle potential image load updates
+      if (topImg) topImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
+      if (bottomImg) bottomImg.addEventListener('load', () => { if (scrollEnabled) updateImagePositions(); });
+      
+    })();
+  </script>
+</body>
+</html>
