@@ -1,0 +1,296 @@
+<!-- secrets in the city - why are you looking here you cheeky so and so! -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kate &amp; Bronson · Allergen Information</title>
+<!-- font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap" rel="stylesheet">
+  <!-- style -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 120vh;
+      font-family: 'Playfair', 'Times New Roman', serif;
+      background: linear-gradient(145deg, #D3E7CB 0%, #D3E7CB 50%, #A6BFA7 75%, #88A58F 100%);
+      background-blend-mode: overlay;
+      position: relative;
+      color: #1e2e1e;
+      line-height: 1.5;
+    }
+
+    .deco-img {
+      position: fixed;
+      width: 225px;
+      height: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 2;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.06));
+      transition: transform 0.05s linear;
+      will-change: transform;
+      opacity: 0;
+    }
+
+    .img-top { top: 20px; }
+    .img-bottom { bottom: 20px; }
+
+    .img-top {
+      animation: fadeInImage 1.2s ease forwards;
+      animation-delay: 0.3s;
+    }
+    .img-bottom {
+      animation: fadeInImage 1.2s ease forwards;
+      animation-delay: 0.3s;
+    }
+
+    @keyframes fadeInImage {
+      0% { opacity: 0; }
+      100% { opacity: 0.9; }
+    }
+
+    .invitation-wrapper {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 4rem 1.5rem;
+    }
+
+    .info-card {
+      max-width: 720px;
+      width: 100%;
+      background: rgba(255, 250, 240, 0.45);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      padding: 2.8rem 2.5rem;
+      border-radius: 32px;
+      box-shadow: 0 25px 40px -10px rgba(30, 20, 5, 0.15);
+      border: 1px solid rgba(104, 28, 36, 0.2);
+      opacity: 0;
+      animation: fadeInCard 1s ease forwards;
+      animation-delay: 0.4s;
+    }
+
+    @keyframes fadeInCard {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    h1, h2, .section-title { color: #681C24; }
+
+    .header-reveal {
+      opacity: 0;
+      animation: fadeInUp 0.8s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    .page-title {
+      font-size: 3rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-align: center;
+      line-height: 1.2;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .sub-invite {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #2e3b2e;
+      text-align: center;
+      margin-top: 0.4rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    .wedding-details {
+      text-align: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #681C24;
+      padding-bottom: 1.2rem;
+    }
+
+    .content-reveal {
+      opacity: 0;
+      animation: fadeInUp 0.9s ease forwards;
+      animation-delay: 0.6s;
+      text-align: center;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .allergen-intro {
+      font-size: 1.1rem;
+      color: #2c3e2c;
+      margin-bottom: 1.75rem;
+      line-height: 1.7;
+    }
+
+    /* ---- Allergen list styling ---- */
+    .allergen-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      text-align: left;
+      margin-bottom: 1.75rem;
+    }
+
+    .allergen-list li {
+      background: rgba(211, 231, 203, 0.25);
+      padding: 1rem 1.4rem;
+      border-radius: 24px;
+      border: 1px solid rgba(104, 28, 36, 0.12);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .allergen-list strong {
+      color: #681C24;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.15rem;
+      letter-spacing: 0.3px;
+    }
+
+    .allergen-note {
+      font-size: 1rem;
+      font-style: italic;
+      color: #3e4f3e;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .info-card { padding: 1.8rem 1.2rem; }
+      .page-title { font-size: 2.3rem; }
+      .sub-invite { font-size: 1rem; }
+      .deco-img { width: 180px; }
+    }
+
+    @media (min-height: 1000px) {
+      body { min-height: 100vh; }
+    }
+
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body>
+  <img class="deco-img img-top" id="topImage" src="/images/top.png" alt="Top overlapping tattoo" width="225" height="150">
+  <img class="deco-img img-bottom" id="bottomImage" src="/images/bottom.png" alt="Bottom overlapping tattoo" width="225" height="150">
+
+  <div class="invitation-wrapper">
+
+    <!-- Allergen information card -->
+    <div class="info-card" id="infoCard">
+      <div class="header-reveal">
+        <div class="wedding-details">
+          <h1 class="page-title">Allergen Information</h1>
+          <div class="sub-invite">Kate &amp; Bronson · 24 · 10 · 2026</div>
+        </div>
+      </div>
+
+      <div class="content-reveal">
+
+        <!-- ============================================= -->
+        <!-- FILL IN YOUR ALLERGEN CONTENT BELOW -->
+        <!-- ============================================= -->
+
+        <p class="allergen-intro">
+          Replace this paragraph with your introductory allergen information.
+        </p>
+
+        <ul class="allergen-list">
+          <li>
+            <strong>Allergen heading</strong>
+            Description of the allergen / what to be aware of.
+          </li>
+          <li>
+            <strong>Allergen heading</strong>
+            Description of the allergen / what to be aware of.
+          </li>
+          <li>
+            <strong>Allergen heading</strong>
+            Description of the allergen / what to be aware of.
+          </li>
+        </ul>
+
+        <p class="allergen-note">
+          Any closing note — e.g. who to contact with questions.
+        </p>
+
+        <!-- ============================================= -->
+        <!-- END OF ALLERGEN CONTENT -->
+        <!-- ============================================= -->
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const topImg = document.getElementById('topImage');
+      const bottomImg = document.getElementById('bottomImage');
+
+      const easeSlow = (t) => Math.pow(t, 3.5);
+
+      function updateImagePositions() {
+        const scrollY = window.scrollY;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const rawProgress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0;
+        const progress = easeSlow(rawProgress);
+
+        const topHeight = topImg.offsetHeight || 150;
+        const bottomHeight = bottomImg.offsetHeight || 150;
+        const viewportHeight = window.innerHeight;
+
+        const topInitialTop = 20;
+        const bottomInitialBottom = 20;
+        const centerY = viewportHeight / 2;
+
+        const topTargetMove = centerY - topInitialTop - (topHeight / 2);
+        const bottomInitialTop = viewportHeight - bottomHeight - bottomInitialBottom;
+        const bottomTargetMove = centerY - bottomInitialTop - (bottomHeight / 2);
+
+        topImg.style.transform = `translateX(-50%) translateY(${progress * topTargetMove}px)`;
+        bottomImg.style.transform = `translateX(-50%) translateY(${progress * bottomTargetMove}px)`;
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateImagePositions();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener('load', () => {
+        updateImagePositions();
+        setTimeout(updateImagePositions, 20);
+      });
+
+      window.addEventListener('scroll', onScroll);
+      window.addEventListener('resize', updateImagePositions);
+
+      topImg.addEventListener('load', updateImagePositions);
+      bottomImg.addEventListener('load', updateImagePositions);
+    })();
+  </script>
+</body>
+</html>
